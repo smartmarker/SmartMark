@@ -3,6 +3,14 @@
 *SMARTMARK* is a novel software watermarking scheme, aiming to address the ownership verification problem for smart contracts. *SMARTMARK* builds the control flow graph of a target contract runtime bytecode and carefully selects some bytes from each block in the control flow graph to represent a watermark. Any extra bytes for the watermark are not added to the contract's runtime bytecode, which is safe from an adversary's watermark targeted attack and gas cost increment.  
 </br>
 
+## Authors
+
+Taeyoung Kim <<tykim0402@skku.edu>> <br>
+Yunhee Jang <<unijang@skku.edu>> <br>
+Chanjong Lee <<leecj323@skku.edu>>, <br>
+Hyungjoon Koo <<kevin.koo@skku.edu>>, <br>
+Hyoungshick Kim <<hyoung@skku.edu>>
+
 ## How to watermark
 
 
