@@ -7,8 +7,8 @@
 
 Taeyoung Kim <<tykim0402@skku.edu>> <br>
 Yunhee Jang <<unijang@skku.edu>> <br>
-Chanjong Lee <<leecj323@skku.edu>>, <br>
-Hyungjoon Koo <<kevin.koo@skku.edu>>, <br>
+Chanjong Lee <<leecj323@skku.edu>> <br>
+Hyungjoon Koo <<kevin.koo@skku.edu>> <br>
 Hyoungshick Kim <<hyoung@skku.edu>>
 
 ## How to watermark
