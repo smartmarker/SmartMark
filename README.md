@@ -48,11 +48,11 @@ python3 main.py [flags]
 ```bash
 SmartMark
     .
-    |--- main.py              // Main program that builds and parses CFG and calls two modules
+    |--- main.py              // Main program that builds and parses CFG and imports two modules
     |--- EmbedWatermark.py    // Module for watermark embedding
     |--- VerifyWatermark.py   // Module for watermark verification
     |--- ErrorHandler.py      // Module for handling error during embdding or verification process
-    |--- samples              // 
+    |--- samples              // Sample data (runtime bytecode, CFG, WRO, WROMAC, verify_result) to test *SmartMark*
 ```
 
 *SmartMark* can be run with the `python3 main.py [flags]` command.
@@ -86,6 +86,9 @@ optional arguments:
   -o MAXOPNUM, --maxOpNum MAXOPNUM
                         a max opcode number for opcode grouping (default: 5)
 ```
+<br>
+
+*SmartMark* asks next two questions to enter the specific execution mode and confirms that the required inputs has been properly submitted.
 
 ### 1. **execution mode**
 
@@ -95,8 +98,8 @@ First, it asks which mode to be run (i.e., watermark embedding mode or verificat
 Do you wanna embed or verify the watermark(s)? (embed:1, verify:0) [0/1] : !your answer here!
 ```
 
-- If selected 1 (embed), it calls the EmbedWatermark module afterwards
-- If selected 0 (verify), it calls the VerifyWatermark module afterwards
+- If selected 1 (embed), it enters the embedding mode and calls the functions in EmbedWatermark module afterwards
+- If selected 0 (verify), it enters the verification mode and calls the functions in VerifyWatermark module afterwards
 
 The required inputs depends on the currently selected mode.
 
@@ -152,8 +155,37 @@ If the only file you have is a **contract runtime bytecode**, select ‘y’ and
 Otherwise if you already have a **JSON-format** **CFG built by EtherSolve**, select ‘n’ and submits
 
 - the path of a CFG json input file (flag: -I or —CFG)
+<br>
+
+### ErrorHandler
+
+This module includes two error-related classes, which can be invoked while embedding and verifying the watermark(s).
+
+- **InSufficientContractSize Error**
+This error occurs when the supplied length and the number of watermark(s) are too large to embed watermark(s) into the given contract
+```markdown
+ErrorHandler.InSufficientContractSize: This contract has insufficient number of CFG blocks ({your_contract_blockNum}) to be watermarked. Please use smaller length and number of watermark(s) that the (length * number) does not exceed {your_contract_blockNum}.
+```
+- **InvalidWROMAC Error**
+This error occurs when the given WRO cannot be verified by the given WROMAC. This means that the Keccak-256 hash value of the WRO does not match with the WROMAC.
+```markdown
+ErrorHandler.InvalidWROMAC: This contract cannot be verified by given invalid WROMAC.
+```
+
+### samples
+
+This folder contains the following data that can be used to test *SmartMark*
+
+- **runtime bytecode data**: {DividendPayingToken, EthealPromoToken}bin-runtime
+- **CFG data**: {DividendPayingToken_CFG, EthealPromoToken_CFG}.json
+- **WRO data**: {DividendPayingToken, EthealPromoToken}.WRO
+- **WROMAC data**: {DividendPayingToken, EthealPromoToken}.WROMAC
+- **verification result data**: {DividendPayingToken, EthealPromoToken, E_DividendPayingToken-V_EthealPromoToken}.result
+
+Especially, E_DividendPayingToken-V_EthealPromoToken.result file is the result of verifying EthealPromoToken contract using the WRO of DividendPayingToken contract
 
 ---
+
 <br>
 
 
@@ -181,4 +213,4 @@ This dataset contains the 27,824 JSON-format CFG files built from the above runt
 ### **Solidity_codes_9324**
 
 This dataset contains the 9,324 Solidity source codes for the contracts that have publicly released source codes among the above 27,824 contracts. We collected these codes by crawling EtherScan.
-In EtherScan, even for a single contract address, there would be multiple Solidity source codes consisting of multiple contracts that are in a inheritance relationship. For successful compilation, we collected all source codes for each address, and sorted them in the order of inheritance in a single file, and also we removed all unnecessary instructions, such as annotations, *import* instructions, and redundant pragma versions.
+In EtherScan, even for a single contract address, there would be multiple Solidity source codes consisting of multiple contracts that are in an inheritance relationship. For successful compilation, we collected all source codes for each address, and sorted them in the order of inheritance in a single file, and then removed all unnecessary instructions, such as annotations, *import* instructions, and redundant pragma versions.
