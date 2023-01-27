@@ -40,14 +40,14 @@ class ContractData:
         
         os.makedirs('./SmartMark_output',exist_ok=True)
         
-        reply = str(input("Do you wanna embed or verify the watermark(s)? (embed:1, verify:0) [0/1]")).strip()
+        reply = str(input("Do you wanna embed or verify the watermark(s)? (embed:1, verify:0) [0/1] : ")).strip()
         self.status = int(reply)
         
         if self.status == 0 and (WRO_path == '' or WROMAC_path == ''):
-            print("You have to give the paths of both WRO (flag: -W or --WRO) and WROMAC (flag: -M or --WROMAC)")
+            print("\n[Failed]\nYou have to give the paths of both WRO (flag: -W or --WRO) and WROMAC (flag: -M or --WROMAC)")
             sys.exit(0)
         elif self.status ==1 and (length_WM == 0 or number_WM == 0):
-            print("You have to give both the length (flag: -L or --length) and the number (flag: -N or --number) of watermark(s) to be embedded.")
+            print("\n[Failed]\nYou have to give both the length (flag: -L or --length) and the number (flag: -N or --number) of watermark(s) to be embedded.")
             sys.exit(0)
         
         self.CFG_path = CFG_path if CFG_path != '' else './SmartMark_output/CFG.json'
@@ -72,20 +72,17 @@ class ContractData:
     
     def buildCFG(self, inputCFGBuilder_path : str, inputBytecode_path : str) -> None:
                 
-        reply = str(input("Build CFG from a runtime bytecode? (It you already have one, just select 'n') (y/n): ")).lower().strip()
+        reply = str(input("Build CFG from a runtime bytecode? (It you already have one, just select 'n') [y/n] : ")).lower().strip()
         if reply[0] == 'y':
-            if inputCFGBuilder_path == "":
-                print("You have to give the path of the EtherSolve tool (flag: -B or --CFG-builder)")
-                sys.exit(0)
-            if inputBytecode_path == "":
-                print("You have to give the path of a contract runtime bytecode (flag: -R or --bin_runtime)")
+            if inputCFGBuilder_path == "" or inputBytecode_path == "":
+                print("\n[Failed]\nYou have to give both the path of the EtherSolve tool (flag: -B or --CFG-builder) and the path of a contract runtime bytecode (flag: -R or --bin_runtime)")
                 sys.exit(0)
 
             build_command = "java -jar "+inputCFGBuilder_path+"/EtherSolve.jar " + inputBytecode_path + " -r -o" + self.CFG_path + " -j"
             sp.call(build_command, shell=True)
         elif reply[0] == 'n':
             if self.CFG_path == "./SmartMark_output/CFG.json":
-                print("You have to give the path of the CFG of a contract runtime bytecode (flag: -I or --CFG)")
+                print("\n[Failed]\nYou have to give the path of the CFG of a contract runtime bytecode (flag: -I or --CFG)")
                 sys.exit(0)
             return
         
@@ -226,7 +223,7 @@ class ContractData:
         with open(self.WROMAC_path, 'w') as ww:
             ww.write(WRO_MAC.hexdigest())
             
-        print("This contract has been successfully watermarked. (see " + self.WRO_path + " and " + self.WROMAC_path + ")")
+        print("\n[EMBEDDING SUCCEED]\nThis contract has been successfully watermarked. (see " + self.WRO_path + " and " + self.WROMAC_path + ")")
             
     def verify_watermark(self) -> None:
         
@@ -252,9 +249,9 @@ class ContractData:
         wa.close()
         
         if watermark_verified == True:
-            print("[VERIFIED] This contract has been succesfully verified by given WRO. (see " + self.WM_path + ")")
+            print("\n[VERIFIED]\nThis contract has been succesfully verified by given WRO. (see " + self.WM_path + ")")
         else:
-            print("[NOT VERIFIED] This contract cannot be verified by given WRO. (see " + self.WM_path + ")")
+            print("\n[NOT VERIFIED]\nThis contract cannot be verified by given WRO. (see " + self.WM_path + ")")
         
 
 #####################################################################################################################
@@ -262,15 +259,15 @@ class ContractData:
 import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('-I', '--CFG', type = str, default = "", help = 'path of a CFG json file')
-parser.add_argument('-W', '--WRO', type=str, default = "", help = 'path of a WRO file')
-parser.add_argument('-M', '--WROMAC', type=str, default = "", help = 'path of a WRO MAC file')
+parser.add_argument('-W', '--WRO', type=str, default = "", help = 'path of a WRO file **required for verification**')
+parser.add_argument('-M', '--WROMAC', type=str, default = "", help = 'path of a WRO MAC file **required for verification**')
 parser.add_argument('-V', '--result', type=str, default = "", help = 'path of a file that contains the verification result')
 
 parser.add_argument('-B', '--CFG_builder', type=str, default = "", help = 'path of the EtherSolve control flow graph builder')
 parser.add_argument('-R', '--bin_runtime', type=str, default = "", help = 'path of a runtime bytecode to build control flow graph')
 
-parser.add_argument('-L', '--length', type=int, default=0, help = 'the length of watermark')
-parser.add_argument('-N', '--number', type=int, default=0, help = 'the number of watermark')
+parser.add_argument('-L', '--length', type=int, default=0, help = 'the length of the watermark(s) **required for embedding**')
+parser.add_argument('-N', '--number', type=int, default=0, help = 'the number of the watermark(s) **required for embedding**')
 parser.add_argument('-c', '--gasCost', type=int, default = 9, help = 'a minumum gas cost for opcode group (default: 9)')
 parser.add_argument('-r', '--ratio', type=int, default = 20, help = 'a opcode group ratio (default: 20)')
 parser.add_argument('-o', '--maxOpNum', type=int, default = 5, help = 'a max opcode number for opcode grouping (default: 5)')

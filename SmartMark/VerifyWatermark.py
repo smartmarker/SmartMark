@@ -87,7 +87,3 @@ def extractWatermark(bytestream_hash_list : list, blockHashs : list, WM_offsets 
             watermarks.append(watermark)
             watermark = str()
     return watermarks
-    
-    
-        
-        

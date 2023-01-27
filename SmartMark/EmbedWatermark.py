@@ -27,7 +27,7 @@ def generateWatermarkableBytestreams(bytestreams : list, opcodeGroupList : list,
 def electWatermarkBytes(bytestreams : list, len_WM : int, num_WM : int) -> list:
     
     if len(bytestreams) < len_WM * num_WM:
-        raise ContractSizeError(len(self.watermarkableBytestreamList))
+        raise InSufficientContractSize(len(bytestreams))
     
     watermarkableBlock_idxs = random.sample(range(0,len(bytestreams)), len_WM*num_WM)
     
