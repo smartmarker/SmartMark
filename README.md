@@ -20,6 +20,9 @@ Hyoungshick Kim <[hyoung@skku.edu](mailto:hyoung@skku.edu)> *- Sungkyunkwan Univ
 <br>
 
 ## Requirements
+- Install Python3
+- Install Java
+- Install [EtherSolve](https://github.com/SeUniVr/EtherSolve_ICPC2021_ReplicationPackage.git) (EtherSolve builds the control flow graph of a smart contract, which is used as input of *SmartMark*)
 
 To execute the *SmartMark* program, the pycryptodome python package needs to be installed. The installation command is as follows:
 
@@ -45,11 +48,11 @@ python3 main.py [flags]
 ```bash
 SmartMark
     .
-    |--- main.py              // Program entry
-    |--- EmbedWatermark.py    // 
-    |--- VerifyWatermark.py
-    |--- ErrorHandler.py
-    |--- samples
+    |--- main.py              // Main program that builds and parses CFG and calls two modules
+    |--- EmbedWatermark.py    // Module for watermark embedding
+    |--- VerifyWatermark.py   // Module for watermark verification
+    |--- ErrorHandler.py      // Module for handling error during embdding or verification process
+    |--- samples              // 
 ```
 
 *SmartMark* can be run with the `python3 main.py [flags]` command.
@@ -98,14 +101,36 @@ Do you wanna embed or verify the watermark(s)? (embed:1, verify:0) [0/1] : !your
 The required inputs depends on the currently selected mode.
 
 - **Embedding mode**
+    - command example: ```python3 main.py -L 15 -N 3 -I samples/EthealPromoToken_CFG.json```
     - the length of the watermark(s) (flag: -L or —length)
-    - the number of the watermark(s) (flag: -N or —number)
-    - [optional] path of a WRO output file (flag: -W or —WRO)
-    - [optional] path of a WROMAC output file (flag: -M or —WROMAC)
+    - the the number of the watermark(s) (flag: -N or —number)
+    - [optional] the path of a WRO output file (flag: -W or —WRO)
+    - [optional] the path of a WROMAC output file (flag: -M or —WROMAC)
+
+If the embedding process  successfully completed, it shows the message below:
+```markdown
+[EMBEDDING SUCCEED]
+This contract has been successfully watermarked. (see {your_WRO_path_here}) and {your_WROMAC_path_here})
+```
+
 - **Verification mode**
-    - path of a WRO input file (flag: -W or —WRO)
-    - path of a WROMAC input file (flag: -M or —WROMAC)
-    - [optional] path of a output file that contains the verification result (flag: -V or —result)
+    - command example: ```python3 main.py -W SmartMark_output/WRO -M SmartMark_output/WROMAC -I samples/EthealPromoToken_CFG.json```
+    - the path of a WRO input file (flag: -W or —WRO)
+    - the path of a WROMAC input file (flag: -M or —WROMAC)
+    - [optional] the path of a output file that contains the verification result (flag: -V or —result)
+
+If the verification process successfully completed, it shows the message below:
+
+```markdown
+[VERIFIED]
+This contract has been succesfully verified by given WRO. (see {your_result_path_here})
+```
+
+If the verification process successfully completed but the contract is failed to be verified by the given WRO, it shows the message below:
+```markdown
+[NOT VERIFIED]
+This contract cannot be verified by given WRO. (see {your_result_path_here})
+```
 
 ✅ The optional flags are related to the paths of the output files. If those paths are not given, the output files are saved in the SmartMark_output directory by default.
 
@@ -117,21 +142,20 @@ Second, it checks whether the CFG construction needs to be performed before embe
 Build CFG from a runtime bytecode? (It you already have one, just select 'n') [y/n] : !your answer here!
 ```
 
-❗Note: SmartMark requires the CFG to watermark a contract and it only supports the EtherSolve CFG builder for now.
+If the only file you have is a **contract runtime bytecode**, select ‘y’ and submits
 
-If the only one you have is a **contract runtime bytecode**, select ‘y’ and submits
-
-- path of the EtherSolve control flow graph builder in your system (flag: -B or —CFG_builder)
-- path of a runtime bytecode to build control flow graph (flag: -R or —bin_runtime)
-- [optional] path of a CFG json output file
+- the path of the EtherSolve control flow graph builder in your system (flag: -B or —CFG_builder)
+- the path of a runtime bytecode to build control flow graph (flag: -R or —bin_runtime)
+- [optional] the path of a CFG json output file
+> ❗Note: *SmartMark* requires the CFG of a contract to watermark and it only supports the [EtherSolve](https://github.com/SeUniVr/EtherSolve_ICPC2021_ReplicationPackage) CFG builder for now. Get `EtherSolve.jar` file from the EtherSolve GitHub repository, and specify its path by -B (or --CFG_builder) flag.
 
 Otherwise if you already have a **JSON-format** **CFG built by EtherSolve**, select ‘n’ and submits
 
-- path of a CFG json input file (flg: -I or —CFG)
-
-<br>
+- the path of a CFG json input file (flag: -I or —CFG)
 
 ---
+<br>
+
 
 ## Dataset
 
