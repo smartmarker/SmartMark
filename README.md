@@ -1,3 +1,7 @@
+### This repository got moved to [here](https://github.com/SKKU-SecLab/SmartMark.git). You can check for the implemented program and the datasets in our new repository.
+
+---
+
 # **SmartMark - Software Watermarking Scheme for Smart Contracts**
 
 *SmartMark* is a novel software watermarking scheme, aiming to protect the ownership of a smart contract against a pirate activity.
